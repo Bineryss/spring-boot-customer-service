@@ -1,10 +1,15 @@
 package de.binerys.customerservice.dto;
 
-import lombok.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
 import javax.validation.constraints.NotBlank;
 
+@Schema(name = "Customer")
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode

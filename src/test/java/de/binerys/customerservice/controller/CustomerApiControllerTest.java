@@ -1,4 +1,4 @@
-package de.binerys.customerservice.rest;
+package de.binerys.customerservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.binerys.customerservice.dto.CustomerApiDTO;
@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -31,7 +32,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(CustomerApiController.class)
 @Import(CustomerMapperImpl.class)
+@WithMockUser
 class CustomerApiControllerTest {
+
     @Autowired
     MockMvc mockMvc;
     @MockBean
@@ -120,10 +123,21 @@ class CustomerApiControllerTest {
         mockMvc.perform(post("/api/customer")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated())
+                .andExpect(header()
+                        .string("Location",
+                                "http://localhost/api/customer/" + customer.getCustomerNbr()));
         var argumentCaptor = ArgumentCaptor.forClass(Customer.class);
         verify(customerRepository).save(argumentCaptor.capture());
         var savedCustomer = argumentCaptor.getValue();
         assertThat(customer).usingRecursiveComparison().isEqualTo(savedCustomer);
+    }
+
+    @Test
+    void testNotFound() throws Exception {
+        var unknown = "unknown";
+        mockMvc.perform(get("/api/customer/{customerNbr}", unknown))
+                .andExpect(status().isNotFound());
+        verify(customerRepository).findProjectionsByCustomerNbr(unknown, CustomerApiDTO.class);
     }
 }
