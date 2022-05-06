@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .mvcMatchers("/api/auth", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .mvcMatchers("/api/auth", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().disable()
