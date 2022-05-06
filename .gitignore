@@ -31,3 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/traget/data/customer_db.mv.db
